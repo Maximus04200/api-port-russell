@@ -8,6 +8,7 @@ router.use(protect);
 router.get('/', service.getAll);
 router.get('/:idReservation', service.getById);
 router.post('/', service.create);
+router.put('/:idReservation', service.update);
 router.delete('/:idReservation', service.remove);
 
 module.exports = router;
