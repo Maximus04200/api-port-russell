@@ -2,6 +2,10 @@ const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
 const { connect } = require('./db/mongo');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
+
+
 
 if (process.env.NODE_ENV === 'production') {
 } else {
@@ -34,6 +38,7 @@ app.use('/users', require('./routes/users'));
 app.use('/', require('./routes/views'));
 app.use('/api/catways', require('./routes/catways'));
 app.use('/api/catways/:id/reservations', require('./routes/reservations'));
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((req, res) => {
   res.status(404).json({ message: 'Route introuvable' });

@@ -1,6 +1,18 @@
+/**
+ * @file middlewares/jwt.js
+ * @description Middleware d'authentification JWT.
+ */
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 
+/**
+ * Middleware de protection des routes.
+ * Vérifie le token JWT dans l'en-tête Authorization.
+ * @param {import('express').Request}  req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 exports.protect = async (req, res, next) => {
   let token;
 

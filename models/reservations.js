@@ -1,5 +1,18 @@
+/**
+ * @file models/reservations.js
+ * @description Modèle Mongoose pour les réservations de catways.
+ */
+
 const mongoose = require('mongoose');
 
+/**
+ * @typedef {Object} Reservation
+ * @property {number} catwayNumber - Numéro du catway réservé
+ * @property {string} clientName   - Nom du client
+ * @property {string} boatName     - Nom du bateau
+ * @property {Date}   startDate    - Date de début
+ * @property {Date}   endDate      - Date de fin
+ */
 const reservationSchema = new mongoose.Schema({
   catwayNumber: {
     type: Number,
