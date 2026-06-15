@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Catways — Port Russell</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <nav>
+    <span style="color:white; font-weight:bold;">⚓ Port Russell</span>
+    <div>
+      <a href="/dashboard">Tableau de bord</a>
+      <a href="/catways">Catways</a>
+      <a href="/reservations">Réservations</a>
+      <a href="/utilisateurs">Utilisateurs</a>
+      <a href="/api-docs">Documentation</a>
+      <a href="/logout">Déconnexion</a>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <h1>Gestion des Catways</h1>
+
+    <% if (typeof success !== 'undefined') { %>
+      <p class="success"><%= success %></p>
+    <% } %>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+   
+    <div class="card" style="padding:20px; background:white; border-radius:8px; margin-bottom:20px;">
+      <h2>Ajouter un catway</h2>
+      <form action="/catways" method="POST">
+        <div class="form-group">
+          <label>Numéro</label>
+          <input type="number" name="catwayNumber" required>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select name="catwayType" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
+            <option value="short">Short</option>
+            <option value="long">Long</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>État</label>
+          <input type="text" name="catwayState" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+      </form>
+    </div>
+
+    
+    <h2 style="margin-bottom:15px;">Liste des catways</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Numéro</th>
+          <th>Type</th>
+          <th>État</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% catways.forEach(c => { %>
+        <tr>
+          <td><%= c.catwayNumber %></td>
+          <td><%= c.catwayType %></td>
+          <td><%= c.catwayState %></td>
+          <td>
+            <a href="/catways/<%= c._id %>" class="btn btn-primary">Détail</a>
+            <form action="/catways/<%= c._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
