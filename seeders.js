@@ -11,33 +11,37 @@ const catways = require('./Fichiers/catways.json');
 const reservations = require('./Fichiers/reservations.json');
 
 const importData = async () => {
-  try {
-    await mongoose.connect(process.env.URL_MONGO);
-    console.log('Connecté à MongoDB');
+    try {
+        await mongoose.connect(process.env.URL_MONGO);
+        console.log('Connecté à MongoDB');
 
-    await Catway.deleteMany();
-    await Reservation.deleteMany();
-    await User.deleteMany();
+        await Catway.deleteMany();
+        await Reservation.deleteMany();
+        await User.deleteMany();
 
-    await Catway.insertMany(catways);
-    console.log('Catways importés');
+        await Catway.insertMany(catways);
+        console.log('Catways importés');
 
-    await Reservation.insertMany(reservations);
-    console.log('Réservations importées');
+        await Reservation.insertMany(reservations);
+        console.log('Réservations importées');
 
-    await User.create({
-      name: 'Admin',
-      email: 'admin@port-russell.fr',
-      password: 'admin123'
-    });
-    console.log('Utilisateur admin créé');
+        const bcrypt = require('bcryptjs');
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash('admin123', salt);
 
-    console.log('Données importées avec succès !');
-    process.exit(0);
-  } catch (err) {
-    console.error('Erreur :', err.message);
-    process.exit(1);
-  }
+        await User.insertMany([{
+            name: 'Admin',
+            email: 'admin@port-russell.fr',
+            password: hashedPassword
+        }]);
+        console.log('Utilisateur admin créé');
+
+        console.log('Données importées avec succès !');
+        process.exit(0);
+    } catch (err) {
+        console.error('Erreur :', err.message);
+        process.exit(1);
+    }
 };
 
 importData();
