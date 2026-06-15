@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/users');
 const Reservation = require('../models/reservations');
+const Catway = require('../models/catways');
 const jwt = require('jsonwebtoken');
 
 
@@ -26,7 +27,6 @@ router.post('/login', async (req, res) => {
     if (!user || !(await user.matchPassword(password))) {
       return res.render('index', { error: 'Email ou mot de passe incorrect' });
     }
-    const jwt = require('jsonwebtoken');
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '24h' });
     req.session.token = token;
     req.session.user = { id: user._id, username: user.username, email: user.email };
@@ -57,6 +57,64 @@ router.get('/dashboard', requireLogin, async (req, res) => {
     });
   } catch (err) {
     res.status(500).send(err.message);
+  }
+});
+
+
+
+router.get('/catways', requireLogin, async (req, res) => {
+  try {
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('catways', { catways });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+router.post('/catways', requireLogin, async (req, res) => {
+  try {
+    await Catway.create(req.body);
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('catways', { catways, success: 'Catway ajouté avec succès' });
+  } catch (err) {
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('catways', { catways, error: err.message });
+  }
+});
+
+
+router.get('/catways/:id', requireLogin, async (req, res) => {
+  try {
+    const catway = await Catway.findById(req.params.id);
+    if (!catway) return res.redirect('/catways');
+    res.render('catway-detail', { catway });
+  } catch (err) {
+    res.redirect('/catways');
+  }
+});
+
+
+router.put('/catways/:id', requireLogin, async (req, res) => {
+  try {
+    await Catway.findByIdAndUpdate(
+      req.params.id,
+      { catwayState: req.body.catwayState },
+      { new: true }
+    );
+    res.redirect('/catways');
+  } catch (err) {
+    res.redirect('/catways');
+  }
+});
+
+
+router.delete('/catways/:id', requireLogin, async (req, res) => {
+  try {
+    await Catway.findByIdAndDelete(req.params.id);
+    res.redirect('/catways');
+  } catch (err) {
+    res.redirect('/catways');
   }
 });
 
