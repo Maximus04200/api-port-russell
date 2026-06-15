@@ -36,6 +36,7 @@ const importData = async () => {
         }]);
         console.log('Utilisateur admin créé');
 
+        
         console.log('Données importées avec succès !');
         process.exit(0);
     } catch (err) {
