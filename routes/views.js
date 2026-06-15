@@ -254,4 +254,9 @@ router.delete('/utilisateurs/:email', requireLogin, async (req, res) => {
 });
 
 
+
+router.get('/api-docs', (req, res) => {
+  res.render('api-docs');
+});
+
 module.exports = router;
