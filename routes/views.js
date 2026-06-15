@@ -118,4 +118,80 @@ router.delete('/catways/:id', requireLogin, async (req, res) => {
   }
 });
 
+
+router.get('/reservations', requireLogin, async (req, res) => {
+  try {
+    const reservations = await Reservation.find().sort({ startDate: 1 });
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('reservations', { reservations, catways });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+router.post('/reservations', requireLogin, async (req, res) => {
+  try {
+    const catway = await Catway.findById(req.body.catwayId);
+    if (!catway) throw new Error('Catway introuvable');
+
+    await Reservation.create({
+      catwayNumber: catway.catwayNumber,
+      clientName:   req.body.clientName,
+      boatName:     req.body.boatName,
+      startDate:    new Date(req.body.startDate),
+      endDate:      new Date(req.body.endDate)
+    });
+
+    const reservations = await Reservation.find().sort({ startDate: 1 });
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('reservations', { reservations, catways, success: 'Réservation ajoutée' });
+  } catch (err) {
+    const reservations = await Reservation.find().sort({ startDate: 1 });
+    const catways = await Catway.find().sort({ catwayNumber: 1 });
+    res.render('reservations', { reservations, catways, error: err.message });
+  }
+});
+
+
+router.get('/reservations/:id', requireLogin, async (req, res) => {
+  try {
+    const reservation = await Reservation.findById(req.params.id);
+    if (!reservation) return res.redirect('/reservations');
+    res.render('reservation-detail', { reservation });
+  } catch (err) {
+    res.redirect('/reservations');
+  }
+});
+
+
+router.put('/reservations/:id', requireLogin, async (req, res) => {
+  try {
+    await Reservation.findByIdAndUpdate(
+      req.params.id,
+      {
+        clientName: req.body.clientName,
+        boatName:   req.body.boatName,
+        startDate:  new Date(req.body.startDate),
+        endDate:    new Date(req.body.endDate)
+      },
+      { new: true }
+    );
+    res.redirect('/reservations');
+  } catch (err) {
+    res.redirect('/reservations');
+  }
+});
+
+
+router.delete('/reservations/:id', requireLogin, async (req, res) => {
+  try {
+    await Reservation.findByIdAndDelete(req.params.id);
+    res.redirect('/reservations');
+  } catch (err) {
+    res.redirect('/reservations');
+  }
+});
+
+
 module.exports = router;
