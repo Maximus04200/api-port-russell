@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Réservations — Port Russell</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <nav>
+    <span style="color:white; font-weight:bold;">⚓ Port Russell</span>
+    <div>
+      <a href="/dashboard">Tableau de bord</a>
+      <a href="/catways">Catways</a>
+      <a href="/reservations">Réservations</a>
+      <a href="/utilisateurs">Utilisateurs</a>
+      <a href="/api-docs">Documentation</a>
+      <a href="/logout">Déconnexion</a>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <h1>Gestion des Réservations</h1>
+
+    <% if (typeof success !== 'undefined') { %>
+      <p class="success"><%= success %></p>
+    <% } %>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    <div class="card" style="padding:20px; background:white; border-radius:8px; margin-bottom:20px;">
+      <h2>Ajouter une réservation</h2>
+      <form action="/reservations" method="POST">
+        <div class="form-group">
+          <label>Numéro de catway</label>
+          <select name="catwayId" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px;">
+            <% catways.forEach(c => { %>
+              <option value="<%= c._id %>">Catway <%= c.catwayNumber %> (<%= c.catwayType %>)</option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nom du client</label>
+          <input type="text" name="clientName" required>
+        </div>
+        <div class="form-group">
+          <label>Nom du bateau</label>
+          <input type="text" name="boatName" required>
+        </div>
+        <div class="form-group">
+          <label>Date de début</label>
+          <input type="date" name="startDate" required>
+        </div>
+        <div class="form-group">
+          <label>Date de fin</label>
+          <input type="date" name="endDate" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+      </form>
+    </div>
+
+    <h2 style="margin-bottom:15px;">Liste des réservations</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Catway</th>
+          <th>Client</th>
+          <th>Bateau</th>
+          <th>Début</th>
+          <th>Fin</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reservations.forEach(r => { %>
+        <tr>
+          <td><%= r.catwayNumber %></td>
+          <td><%= r.clientName %></td>
+          <td><%= r.boatName %></td>
+          <td><%= new Date(r.startDate).toLocaleDateString('fr-FR') %></td>
+          <td><%= new Date(r.endDate).toLocaleDateString('fr-FR') %></td>
+          <td>
+            <a href="/reservations/<%= r._id %>" class="btn btn-primary">Détail</a>
+            <form action="/reservations/<%= r._id %>?_method=DELETE" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
