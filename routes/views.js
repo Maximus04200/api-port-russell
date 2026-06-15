@@ -194,4 +194,64 @@ router.delete('/reservations/:id', requireLogin, async (req, res) => {
 });
 
 
+router.get('/utilisateurs', requireLogin, async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.render('utilisateurs', { users });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+router.post('/utilisateurs', requireLogin, async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    const existing = await User.findOne({ email });
+    if (existing) throw new Error('Email déjà utilisé');
+    await User.create({ username, email, password });
+    const users = await User.find().select('-password');
+    res.render('utilisateurs', { users, success: 'Utilisateur ajouté' });
+  } catch (err) {
+    const users = await User.find().select('-password');
+    res.render('utilisateurs', { users, error: err.message });
+  }
+});
+
+
+router.get('/utilisateurs/:email', requireLogin, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email }).select('-password');
+    if (!user) return res.redirect('/utilisateurs');
+    res.render('utilisateur-detail', { user });
+  } catch (err) {
+    res.redirect('/utilisateurs');
+  }
+});
+
+
+router.put('/utilisateurs/:email', requireLogin, async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.email });
+    if (!user) return res.redirect('/utilisateurs');
+    if (req.body.username) user.username = req.body.username;
+    if (req.body.password) user.password = req.body.password;
+    await user.save();
+    res.redirect('/utilisateurs');
+  } catch (err) {
+    res.redirect('/utilisateurs');
+  }
+});
+
+
+router.delete('/utilisateurs/:email', requireLogin, async (req, res) => {
+  try {
+    await User.findOneAndDelete({ email: req.params.email });
+    res.redirect('/utilisateurs');
+  } catch (err) {
+    res.redirect('/utilisateurs');
+  }
+});
+
+
 module.exports = router;
