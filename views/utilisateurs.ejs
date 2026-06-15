@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Utilisateurs — Port Russell</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <nav>
+    <span style="color:white; font-weight:bold;">⚓ Port Russell</span>
+    <div>
+      <a href="/dashboard">Tableau de bord</a>
+      <a href="/catways">Catways</a>
+      <a href="/reservations">Réservations</a>
+      <a href="/utilisateurs">Utilisateurs</a>
+      <a href="/api-docs">Documentation</a>
+      <a href="/logout">Déconnexion</a>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <h1>Gestion des Utilisateurs</h1>
+
+    <% if (typeof success !== 'undefined') { %>
+      <p class="success"><%= success %></p>
+    <% } %>
+    <% if (typeof error !== 'undefined') { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+
+    
+    <div class="card" style="padding:20px; background:white; border-radius:8px; margin-bottom:20px;">
+      <h2>Ajouter un utilisateur</h2>
+      <form action="/utilisateurs" method="POST">
+        <div class="form-group">
+          <label>Nom d'utilisateur</label>
+          <input type="text" name="username" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input type="password" name="password" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+      </form>
+    </div>
+
+    
+    <h2 style="margin-bottom:15px;">Liste des utilisateurs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nom d'utilisateur</th>
+          <th>Email</th>
+          <th>Créé le</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.username %></td>
+          <td><%= u.email %></td>
+          <td><%= new Date(u.createdAt).toLocaleDateString('fr-FR') %></td>
+          <td>
+            <a href="/utilisateurs/<%= u.email %>" class="btn btn-primary">Détail</a>
+            <form action="/utilisateurs/<%= u.email %>?_method=DELETE" method="POST" style="display:inline;">
+              <button type="submit" class="btn btn-danger">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

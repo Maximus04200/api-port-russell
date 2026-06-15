@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Détail Utilisateur — Port Russell</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <nav>
+    <span style="color:white; font-weight:bold;">⚓ Port Russell</span>
+    <div>
+      <a href="/dashboard">Tableau de bord</a>
+      <a href="/catways">Catways</a>
+      <a href="/reservations">Réservations</a>
+      <a href="/utilisateurs">Utilisateurs</a>
+      <a href="/api-docs">Documentation</a>
+      <a href="/logout">Déconnexion</a>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <a href="/utilisateurs" class="btn btn-primary" style="margin-bottom:20px; display:inline-block;">← Retour</a>
+    <h1>Utilisateur — <%= user.username %></h1>
+
+    <div class="card" style="padding:20px; background:white; border-radius:8px; margin-bottom:20px;">
+      <p><strong>Email :</strong> <%= user.email %></p>
+      <p><strong>Créé le :</strong> <%= new Date(user.createdAt).toLocaleDateString('fr-FR') %></p>
+    </div>
+
+ 
+    <div class="card" style="padding:20px; background:white; border-radius:8px;">
+      <h2>Modifier l'utilisateur</h2>
+      <form action="/utilisateurs/<%= user.email %>?_method=PUT" method="POST">
+        <div class="form-group">
+          <label>Nom d'utilisateur</label>
+          <input type="text" name="username" value="<%= user.username %>" required>
+        </div>
+        <div class="form-group">
+          <label>Nouveau mot de passe (laisser vide pour ne pas changer)</label>
+          <input type="password" name="password" minlength="6">
+        </div>
+        <button type="submit" class="btn btn-success">Mettre à jour</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
